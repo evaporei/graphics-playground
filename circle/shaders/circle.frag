@@ -9,7 +9,6 @@ layout(location = 0) out vec4 outColor;
 void main() {
     float scale = 2.0; // inverse because of length
     float distance = 1.0 - length(uv * scale);
-    if (distance > 0.0)
-        distance = 1.0;
+    distance = step(0.0, distance);
     outColor.rgb = vec3(distance);
 }
