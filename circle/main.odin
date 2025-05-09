@@ -5,7 +5,7 @@ import "core:os"
 import gl "vendor:OpenGL"
 import SDL "vendor:sdl2"
 
-WINDOW_WIDTH, WINDOW_HEIGHT :: 1280, 720
+WINDOW_WIDTH, WINDOW_HEIGHT :: 640, 640
 
 GL_VERSION_MAJOR, GL_VERSION_MINOR :: 3, 3
 
@@ -57,6 +57,12 @@ main :: proc() {
 
 	gl.UseProgram(program)
 
+	uniforms := gl.get_uniforms_from_program(program)
+	defer delete(uniforms)
+
+	width, height :i32= WINDOW_WIDTH, WINDOW_HEIGHT
+	gl.Uniform2f(uniforms["resolution"].location, f32(width), f32(height))
+
 	loop: for {
 		event: SDL.Event
 		for SDL.PollEvent(&event) {
@@ -74,7 +80,11 @@ main :: proc() {
 		{
 			w, h: i32
 			SDL.GetWindowSize(window, &w, &h)
-			gl.Viewport(0, 0, w, h)
+			if w != width || h != height {
+				gl.Viewport(0, 0, w, h)
+				gl.Uniform2f(uniforms["resolution"].location, f32(width), f32(height))
+				width, height = w, h
+			}
 		}
 
 		gl.ClearColor(0.0, 0.0, 0.0, 1.0)
