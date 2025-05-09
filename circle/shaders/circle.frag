@@ -1,7 +1,16 @@
 #version 330
 
+uniform vec2 resolution;
+
+in vec2 uv;
+
 layout(location = 0) out vec4 outColor;
 
 void main() {
-    outColor = vec4(1.0, 0.0, 0.0, 1.0);
+    float scale = 2.0; // inverse somehow
+    float distance = 1.0 - length(uv * scale);
+    if (distance > 0.0)
+        distance = 1.0;
+
+    outColor.rgb = vec3(distance);
 }
